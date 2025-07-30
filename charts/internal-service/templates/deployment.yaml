@@ -5,7 +5,7 @@ metadata:
   labels:
     app: {{ include "internal-service.name" . }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount | default 3 }}
   selector:
     matchLabels:
       app: {{ include "internal-service.name" . }}
@@ -14,42 +14,20 @@ spec:
       labels:
         app: {{ include "internal-service.name" . }}
     spec:
-      {{- if .Values.securityContext.enabled }}
-      securityContext:
-        runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
-      {{- end }}
       containers:
         - name: app
           image: "{{ .Values.hub }}/{{ .Values.image }}:{{ .Values.tag }}"
           ports:
             - containerPort: 8080
           env:
-            - name: PROD
-              value: "{{ .Values.prod | quote }}"
             {{- range $key, $val := .Values.env }}
             - name: {{ $key }}
               value: "{{ $val }}"
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if .Values.securityContext.enabled }}
           securityContext:
-            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem }}
-            allowPrivilegeEscalation: {{ .Values.securityContext.allowPrivilegeEscalation }}
-            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
-            runAsUser: {{ .Values.securityContext.runAsUser }}
-          {{- end }}
-      {{- if .Values.affinity.podAntiAffinity.enabled }}
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: app
-                      operator: In
-                      values:
-                        - {{ include "internal-service.name" . }}
-                topologyKey: kubernetes.io/hostname
-      {{- end }}
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            runAsUser: 1000
