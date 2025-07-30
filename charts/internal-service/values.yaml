@@ -1,0 +1,18 @@
+hub: "tigranham"
+image: "nxlog-env-app"
+tag: "latest"
+prod: false
+
+env: {}
+# Example:
+# env:
+#   DEMO_ENV: "true"
+#   SERVICE_NAME: "nxlog"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi

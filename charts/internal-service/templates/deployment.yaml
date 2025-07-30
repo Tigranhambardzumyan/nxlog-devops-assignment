@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "internal-service.fullname" . }}
+  labels:
+    app: {{ include "internal-service.name" . }}
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: {{ include "internal-service.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "internal-service.name" . }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: app
+          image: "{{ .Values.hub }}/{{ .Values.image }}:{{ .Values.tag }}"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PROD
+              value: "{{ .Values.prod | quote }}"
+            {{- range $key, $val := .Values.env }}
+            - name: {{ $key }}
+              value: "{{ $val }}"
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - {{ include "internal-service.name" . }}
+                topologyKey: kubernetes.io/hostname
+      restartPolicy: Always
