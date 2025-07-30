@@ -2,6 +2,9 @@
 
 This repository contains a Helm-based GitOps-friendly solution for deploying an internal service application. The project is designed to help development teams easily deploy containerized apps without deep Kubernetes expertise.
 
+> ✅ **Optimized for ARM64 (Graviton)**  
+> The Docker image is built for both `arm64` (Graviton) and `amd64` platforms to support cost-efficient, high-performance deployment on AWS.
+
 ---
 
 ## 📦 Project Structure
@@ -23,5 +26,4 @@ The application is a simple Python Flask app that:
 ### Run Locally with Docker
 
 ```bash
-docker build -t nxlog-env-app:latest ./app
-docker run -e EXAMPLE_ENV=value -p 8080:8080 nxlog-env-app:latest
+docker buildx -t nxlog-env-app:latest ./app
