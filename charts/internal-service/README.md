@@ -5,7 +5,8 @@ This repository contains a GitOps-friendly Helm chart for deploying a minimal in
 ✅ **Supports ARM64 (Graviton)**  
 ✅ **Secure-by-default deployments**  
 ✅ **Easy configuration for different environments (dev/prod)**  
-✅ **Built for GitOps workflows**
+✅ **Built-in HPA, anti-affinity, and best practices**  
+✅ **GitOps-ready and Kustomize-compatible**
 
 ---
 
@@ -23,15 +24,40 @@ Docker image:
 
 ## 📦 Helm Chart: `internal-service`
 
-This chart installs a secure, autoscaled deployment of the application with built-in support for:
+This chart installs a secure, autoscaled, multi-pod deployment of the application with built-in support for:
 
-- ARM64 architecture (Graviton)
-- Horizontal Pod Autoscaling (via template)
+- ARM64/Graviton compatibility
+- 3 replicas by default
+- Horizontal Pod Autoscaling (HPA)
 - Pod anti-affinity
 - Custom environment variables
-- Secure `securityContext` defaults
+- SecurityContext hardening
 
 ### Chart Location
+
+
+---
+
+## ⚙️ Configurable Values
+
+These can be passed via `--set` or `values.yaml`.
+
+| Key                          | Description                               | Example                                 |
+|-----------------------------|-------------------------------------------|-----------------------------------------|
+| `hub`                       | Docker registry user/org                  | `tigranham`                             |
+| `image`                     | Docker image name                         | `nxlog-env-app`                         |
+| `tag`                       | Docker image tag                          | `latest`                                |
+| `prod`                      | Boolean for environment type              | `true` or `false`                       |
+| `env`                       | Additional env vars (key-value map)       | `env.ENV=dev`                           |
+| `resources`                 | CPU/memory requests and limits            | See below                               |
+| `replicaCount`              | Number of pods in Deployment              | `3`                                     |
+| `autoscaling.enabled`       | Enable HPA                                | `true`                                  |
+| `autoscaling.minReplicas`   | Minimum pod replicas                      | `3`                                     |
+| `autoscaling.maxReplicas`   | Maximum pod replicas                      | `10`                                    |
+| `autoscaling.targetCPUUtilizationPercentage` | CPU target % for autoscaling | `70`                            |
+| `affinity.podAntiAffinity.enabled` | Spread pods across nodes       | `true`                                  |
+| `securityContext.*`         | Pod security settings                     | Best-practice defaults                  |
+
 
 helm install internal-service-dev ./charts/internal-service \
   --set hub=tigranham,image=nxlog-env-app,tag=latest,prod=false

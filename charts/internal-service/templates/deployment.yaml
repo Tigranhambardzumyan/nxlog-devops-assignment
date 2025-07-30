@@ -5,7 +5,7 @@ metadata:
   labels:
     app: {{ include "internal-service.name" . }}
 spec:
-  replicas: 3
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: {{ include "internal-service.name" . }}
@@ -14,8 +14,10 @@ spec:
       labels:
         app: {{ include "internal-service.name" . }}
     spec:
+      {{- if .Values.securityContext.enabled }}
       securityContext:
-        runAsNonRoot: true
+        runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
+      {{- end }}
       containers:
         - name: app
           image: "{{ .Values.hub }}/{{ .Values.image }}:{{ .Values.tag }}"
@@ -30,11 +32,14 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.securityContext.enabled }}
           securityContext:
-            readOnlyRootFilesystem: true
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 1000
+            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem }}
+            allowPrivilegeEscalation: {{ .Values.securityContext.allowPrivilegeEscalation }}
+            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
+            runAsUser: {{ .Values.securityContext.runAsUser }}
+          {{- end }}
+      {{- if .Values.affinity.podAntiAffinity.enabled }}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -47,4 +52,4 @@ spec:
                       values:
                         - {{ include "internal-service.name" . }}
                 topologyKey: kubernetes.io/hostname
-      restartPolicy: Always
+      {{- end }}

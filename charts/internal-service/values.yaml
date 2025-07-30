@@ -16,3 +16,21 @@ resources:
   limits:
     cpu: 200m
     memory: 256Mi
+replicaCount: 3
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+affinity:
+  podAntiAffinity:
+    enabled: true
+
+securityContext:
+  enabled: true
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+  allowPrivilegeEscalation: false
