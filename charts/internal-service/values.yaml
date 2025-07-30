@@ -1,3 +1,6 @@
+nameOverride: internal-service
+fullnameOverride: internal-service
+
 hub: "tigranham"
 image: "nxlog-env-app"
 tag: "latest"
@@ -16,6 +19,7 @@ resources:
   limits:
     cpu: 200m
     memory: 256Mi
+
 replicaCount: 3
 
 autoscaling:
