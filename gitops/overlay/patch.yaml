@@ -1,10 +1,7 @@
+# gitops/overlay/patch.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: internal-service-internal-service  
+  name: internal-service-dev
 spec:
-  template:
-    spec:
-      containers:
-        - name: app                       
-
+  replicas: 2

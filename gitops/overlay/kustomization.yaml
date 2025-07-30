@@ -1,5 +1,6 @@
+# gitops/overlay/kustomization.yaml
 resources:
   - ../base
 
-patches:
-  - path: patch.yaml
+patchesStrategicMerge:
+  - patch.yaml
