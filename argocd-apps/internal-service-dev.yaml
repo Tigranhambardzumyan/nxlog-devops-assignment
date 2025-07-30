@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: internal-service-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Tigranhambardzumyan/nxlog-devops-assignment
+    targetRevision: development
+    path: gitops/overlay
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: internal-service-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

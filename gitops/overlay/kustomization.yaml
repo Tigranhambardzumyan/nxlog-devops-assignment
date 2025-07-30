@@ -1,4 +1,3 @@
-# gitops/overlay/kustomization.yaml
 resources:
   - ../base
 
