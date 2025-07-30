@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: internal-service-dev
+  name: internal-service
   namespace: argocd
 spec:
   project: default
@@ -11,7 +11,7 @@ spec:
     path: gitops/overlay
   destination:
     server: https://kubernetes.default.svc
-    namespace: internal-service-dev
+    namespace: internal-service
   syncPolicy:
     automated:
       prune: true

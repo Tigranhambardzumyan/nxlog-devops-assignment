@@ -1,4 +1,2 @@
-# gitops/base/kustomization.yaml
 resources:
   - all.yaml
-
