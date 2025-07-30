@@ -26,4 +26,4 @@ The application is a simple Python Flask app that:
 ### Run Locally with Docker
 
 ```bash
-docker buildx -t nxlog-env-app:latest ./app
+docker buildx build --platform linux/arm64  -t nxlog-app:latest ./app
